@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vanilla JS DataTable</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    th {
+      cursor: pointer;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #ddd;
+    }
+
+    .pagination {
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    .pagination button {
+      margin: 0 5px;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <input type="text" id="searchInput" placeholder="Search..." />
+  <table id="myTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Position</th>
+        <th>Office</th>
+        <th>Age</th>
+        <th>Start date</th>
+        <th>Salary</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Dante 1</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Dante 2</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Dante 3</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Dante 4</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Dante 5</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Dante 6</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="pagination" id="pagination"></div>
+
+  <script>
+    class DataTable {
+      constructor(tableId) {
+        this.table = document.getElementById(tableId);
+        this.searchInput = document.getElementById('searchInput');
+        this.pagination = document.getElementById('pagination');
+        this.rowsPerPage = 5;
+        this.currentPage = 1;
+        this.init();
+      }
+
+      init() {
+        this.searchInput.addEventListener('keyup', () => {
+          this.currentPage = 1;
+          this.renderPagination();
+          this.paginateTable();
+        });
+        Array.from(this.table.querySelectorAll('th')).forEach((header, index) => {
+          header.addEventListener('click', () => this.sortTable(index));
+        });
+        this.renderPagination();
+        this.paginateTable();
+      }
+
+      filterRows() {
+        const filter = this.searchInput.value.toLowerCase();
+        const rows = Array.from(this.table.querySelector('tbody').rows);
+        return rows.filter(row => {
+          const cells = Array.from(row.cells);
+          return cells.some(cell => cell.textContent.toLowerCase().includes(filter));
+        });
+      }
+
+      sortTable(n) {
+        const rows = this.filterRows();
+        const isAsc = this.table.dataset.sortOrder === 'asc';
+        rows.sort((a, b) => {
+          const x = a.cells[n].textContent.toLowerCase();
+          const y = b.cells[n].textContent.toLowerCase();
+          return isAsc ? x.localeCompare(y) : y.localeCompare(x);
+        });
+        this.table.dataset.sortOrder = isAsc ? 'desc' : 'asc';
+        this.table.querySelector('tbody').append(...rows);
+        this.paginateTable();
+      }
+
+      renderPagination() {
+        const rows = this.filterRows();
+        const totalPages = Math.ceil(rows.length / this.rowsPerPage);
+        this.pagination.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+          const button = document.createElement('button');
+          button.textContent = i;
+          button.addEventListener('click', () => {
+            this.currentPage = i;
+            this.paginateTable();
+          });
+          this.pagination.appendChild(button);
+        }
+      }
+
+      paginateTable() {
+        const rows = this.filterRows();
+        const start = (this.currentPage - 1) * this.rowsPerPage;
+        const end = start + this.rowsPerPage;
+        const visibleRows = rows.slice(start, end);
+
+        Array.from(this.table.querySelector('tbody').rows).forEach(row => {
+          row.style.display = 'none';
+        });
+
+        visibleRows.forEach(row => {
+          row.style.display = '';
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      new DataTable('myTable');
+    });
+  </script>
+</body>
+
+</html>

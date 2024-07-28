@@ -1,0 +1,25 @@
+{
+  "atividades": [
+    {
+      "id": "1",
+      "_idAtividade": 0,
+      "_listaCategorias": [
+        {
+          "idCategoria": 1,
+          "nome": "Categoria 1",
+          "valor": "28.89"
+        },
+        {
+          "idCategoria": 2,
+          "nome": "Categoria 2",
+          "valor": "38.89"
+        },
+        {
+          "idCategoria": 3,
+          "nome": "Categoria Adicional",
+          "valor": "566"
+        }
+      ]
+    }
+  ]
+}

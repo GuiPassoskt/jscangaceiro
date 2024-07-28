@@ -1,0 +1,19 @@
+{
+  "name": "mvc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sonar": "sonar-scanner.bat -D\"sonar.projectKey=MVC\" -D\"sonar.sources=client\" -D\"sonar.host.url=http://localhost:9000\" -D\"sonar.token=sqp_fdcfde1f44c960397eba9f9bbbc2a2b625d5565d\"",
+    "cy:open": "cypress open",
+    "cy:record": "cypress run",
+    "api:server": "npx json-server server/db.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^13.13.0"
+  }
+}

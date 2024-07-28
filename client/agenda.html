@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda</title>
+</head>
+
+<body>
+  <form id="formAgenda" method="post">
+    <div class="agenda">
+      <input type="date" name="data" required>
+      <input type="time" name="hora_inicio" required>
+      <input type="time" name="hora_fim" required>
+    </div>
+    <div class="agenda">
+      <input type="date" name="data" required>
+      <input type="time" name="hora_inicio" required>
+      <input type="time" name="hora_fim" required>
+    </div>
+    <div class="agenda">
+      <input type="date" name="data" required>
+      <input type="time" name="hora_inicio" required>
+      <input type="time" name="hora_fim" required>
+    </div>
+    <div>
+      <button type="submit">Enviar</button>
+      <button type="button">Cancelar</button>
+    </div>
+  </form>
+
+  <script>
+    const formAgenda = document.querySelector('#formAgenda')
+    formAgenda.addEventListener('submit', (e) => {
+      e.preventDefault()
+
+      const agendas = document.querySelectorAll('.agenda')
+
+      const marcacoes = []
+
+      for (let agenda of agendas) {
+
+        const novaMarcacao = {
+          'data': agenda.querySelector('input[name=data]').value,
+          'hora_inicio': agenda.querySelector('input[name=hora_inicio]').value,
+          'hora_fim': agenda.querySelector('input[name=hora_fim]').value
+        }
+
+        if (validarHorario(marcacoes, novaMarcacao)) {
+          marcacoes.push(novaMarcacao)
+        } else {
+          agenda.querySelector('input[name=data]').value = ''
+          agenda.querySelector('input[name=hora_inicio]').value = ''
+          agenda.querySelector('input[name=hora_fim]').value = ''
+          alert('Existem choques de horários em sua agenda')
+        }
+      }
+
+      debugger
+    })
+
+    function validarHorario(marcacoes, novaMarcacao) {
+      const { data, hora_inicio, hora_fim } = novaMarcacao;
+
+      // Filtra as marcações para a mesma data
+      const marcacoesMesmoDia = marcacoes.filter(m => m.data === data);
+
+      for (let marcacao of marcacoesMesmoDia) {
+        const { hora_inicio: inicioExistente, hora_fim: fimExistente } = marcacao;
+
+        // Converte horários para minutos desde meia-noite para comparação
+        const inicioNovo = converterParaMinutos(hora_inicio);
+        const fimNovo = converterParaMinutos(hora_fim);
+        const inicioMarcacao = converterParaMinutos(inicioExistente);
+        const fimMarcacao = converterParaMinutos(fimExistente);
+
+        // Verifica se o novo horário está antes do início do horário existente
+        if (fimNovo <= inicioMarcacao) {
+          continue;
+        }
+
+        // Verifica se o novo horário está exatamente no final do horário existente
+        if (inicioNovo === fimMarcacao) {
+          continue;
+        }
+
+        // Verifica se o novo horário está depois do final do horário existente
+        if (inicioNovo >= fimMarcacao) {
+          continue;
+        }
+
+        // Verifica se há sobreposição
+        if ((inicioNovo >= inicioMarcacao && inicioNovo < fimMarcacao) ||
+          (fimNovo > inicioMarcacao && fimNovo <= fimMarcacao) ||
+          (inicioNovo <= inicioMarcacao && fimNovo >= fimMarcacao)) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    function converterParaMinutos(horario) {
+      const [hora, minuto] = horario.split(':').map(Number);
+      return hora * 60 + minuto;
+    }
+  </script>
+</body>
+
+</html>
